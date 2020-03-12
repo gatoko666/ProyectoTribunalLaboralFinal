@@ -35,6 +35,8 @@ ${CounterInside}    1
 ${Var12}          1
 @{ParaGuardarEnExcelSumarizado}    # Listado Para guardar En excel
 ${ParaGuardarEnExcelSumarizado}    ${EMPTY}
+${Col}            0
+${Conta}          ${EMPTY}
 
 *** Test Cases ***
 TestFinal
@@ -48,7 +50,17 @@ TestFinal
         AumentadorDeNumeroPorCaso
         Log    ${Var1}
     END
-    Log List    ${ParaGuardarEnExcelSumarizado}
+    #Log List    ${ParaGuardarEnExcelSumarizado}    1
+    #log    Get Index From List    ${ParaGuardarEnExcelSumarizado}    1
+    Open Excel    resultado/Prototipo.xls
+    #Put String To Cell    resultado    0    ${Contador}    ${RutCopiar}
+    FOR    ${var}    IN    ${ParaGuardarEnExcelSumarizado}
+        Put String To Cell    resultado    1    1    ${var}
+    END
+    sleep    8s
+    ${timestamp} =    Get Current Date    result_format=%Y-%m-%d-%H-%M
+    ${filename} =    Set Variable    resultado-${timestamp}.xls
+    Save Excel    resultado/${filename}
 
 *** Keywords ***
 BuscadorDeCasos
@@ -169,3 +181,33 @@ RecorrerCasosInternos
         Select Frame    name=body
         Sleep    10s
     END
+
+GuardadorEnExcelFinal
+    [Documentation]    Generador de archivo Excel con fecha y hora respectiva
+    Open Excel    resultado/Prototipo.xls
+    Sleep    5s
+    log    ${Contador}
+    log    ${RutCopiar}
+    log    ${NombreCopiar}
+    log    ${ApellidoPaternoCopiar}
+    log    ${ApellidoMaternoCopiar}
+    Log List    ${ParaGuardarEnExcelSumarizado}    1
+    Put String To Cell    resultado    0    ${Contador}    ${RutCopiar}
+    Put String To Cell    resultado    1    ${Contador}    ${NombreCopiar}
+    Put String To Cell    resultado    2    ${Contador}    ${ApellidoPaternoCopiar}
+    Put String To Cell    resultado    3    ${Contador}    ${ApellidoMaternoCopiar}
+    ${SiTienenCaso}    Get WebElements    (//td[contains(@height,'11')])[1]
+    ${NombreJuzgado}    Get WebElements    //td[contains(@width,'392')]
+    ${NumeroCaso}=    Get Text    ${SiTienenCaso[0]}
+    ${NombreJuzgado1}=    Get Text    ${NombreJuzgado[0]}
+    Put String To Cell    resultado    4    ${Contador}    ${NumeroCaso}
+    Put String To Cell    resultado    5    ${Contador}    ${NombreJuzgado1}
+    ${timestamp} =    Get Current Date    result_format=%Y-%m-%d-%H-%M
+    ${filename} =    Set Variable    resultado-${timestamp}.xls
+    Save Excel    resultado/${filename}
+    Append To List    ${ParaGuardarEnExcelSumarizado}    ${RutCopiar}
+    Append To List    ${ParaGuardarEnExcelSumarizado}    ${NombreCopiar}
+    Append To List    ${ParaGuardarEnExcelSumarizado}    ${ApellidoPaternoCopiar}
+    Append To List    ${ParaGuardarEnExcelSumarizado}    ${ApellidoMaternoCopiar}
+    Append To List    ${ParaGuardarEnExcelSumarizado}    ${NumeroCaso}
+    Append To List    ${ParaGuardarEnExcelSumarizado}    ${NombreJuzgado1}
