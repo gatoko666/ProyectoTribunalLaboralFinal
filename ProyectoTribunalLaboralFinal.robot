@@ -7,6 +7,8 @@ Library           clipboard
 Library           String
 Library           DateTime
 Library           Collections
+Library           OperatingSystem
+Library           CSVLibrary
 
 *** Variables ***
 ${Url}            https://laboral.pjud.cl/    # Direccion de la pagina a realizar las consultas
@@ -55,12 +57,20 @@ TestFinal
     Open Excel    resultado/Prototipo.xls
     #Put String To Cell    resultado    0    ${Contador}    ${RutCopiar}
     FOR    ${var}    IN    ${ParaGuardarEnExcelSumarizado}
-        Put String To Cell    resultado    1    1    ${var}
+        Put String To Cell    resultado    1    1    ${var}${\n}
     END
     sleep    8s
     ${timestamp} =    Get Current Date    result_format=%Y-%m-%d-%H-%M
     ${filename} =    Set Variable    resultado-${timestamp}.xls
     Save Excel    resultado/${filename}
+    #Create File    resultado/resultado.txt
+    #Append To File    resultado/resultado.txt    ${ParaGuardarEnExcelSumarizado}
+    #Append To File    resultado/resultado.txt    ${ParaGuardarEnExcelSumarizado}    ${\n}
+    #FOR    ${vAR}    IN    ${ParaGuardarEnExcelSumarizado}
+    #Append To Csv File    resultado/resultado.cvs    ${ParaGuardarEnExcelSumarizado}    ${\n}
+    FOR    ${vAR}    IN    ${ParaGuardarEnExcelSumarizado}
+        Append To File    resultado/resultado.txt    ${vAR}    \n
+    END
 
 *** Keywords ***
 BuscadorDeCasos
@@ -205,9 +215,9 @@ GuardadorEnExcelFinal
     ${timestamp} =    Get Current Date    result_format=%Y-%m-%d-%H-%M
     ${filename} =    Set Variable    resultado-${timestamp}.xls
     Save Excel    resultado/${filename}
-    Append To List    ${ParaGuardarEnExcelSumarizado}    ${RutCopiar}
-    Append To List    ${ParaGuardarEnExcelSumarizado}    ${NombreCopiar}
-    Append To List    ${ParaGuardarEnExcelSumarizado}    ${ApellidoPaternoCopiar}
-    Append To List    ${ParaGuardarEnExcelSumarizado}    ${ApellidoMaternoCopiar}
-    Append To List    ${ParaGuardarEnExcelSumarizado}    ${NumeroCaso}
-    Append To List    ${ParaGuardarEnExcelSumarizado}    ${NombreJuzgado1}
+    Append To List    ${ParaGuardarEnExcelSumarizado}    ${RutCopiar}${\n}
+    Append To List    ${ParaGuardarEnExcelSumarizado}    ${NombreCopiar}${\n}
+    Append To List    ${ParaGuardarEnExcelSumarizado}    ${ApellidoPaternoCopiar}${\n}
+    Append To List    ${ParaGuardarEnExcelSumarizado}    ${ApellidoMaternoCopiar}${\n}
+    Append To List    ${ParaGuardarEnExcelSumarizado}    ${NumeroCaso}${\n}
+    Append To List    ${ParaGuardarEnExcelSumarizado}    ${NombreJuzgado1}${\n}
